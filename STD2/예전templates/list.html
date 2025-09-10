@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Damion&family=Gowun+Dodum&family=Kalam&family=Monoton&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="" href="">
+<title> Text-To-Image_previous-list </title>
+<style>
+     *{
+        background-color: white;
+        color: #292D3E;
+        font-family: 'Gowun Dodum', sans-serif;
+    }
+    .allbody {
+        width: 98%;
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        text-align: center;
+        flex-wrap: wrap;
+        margin-left:30px;
+        margin-top:60px;
+        z-index:1;
+    }
+    
+    .topbox{
+        width: 170px;
+        height: 66px;
+        border: 0px solid white;
+        box-sizing: border-box;
+        margin: 0 auto 20px; 
+        position: fixed;
+        left:49.5%;
+        top:2%;
+        transform: translateX(-40%) scale(1.2);
+        text-align: center; 
+        z-index: 6;
+    }
+    .my_list{
+        width: 400px;
+        height: 560px;
+        border: 1px solid white;
+        margin-bottom: 20px;
+        border: 1px solid;      
+        border-radius: 10%;
+        padding:1px;
+        align-content: center;
+        transform:scale(0.8);
+    }
+    .index_box{
+        border:0px;
+        width:20px;
+        margin-top: 5px;
+        font-size: 12px;
+        align-self: center;
+    }
+    .info_box{
+        border:0px;
+        width:320px;
+        margin-top: 2px;
+        font-size: 14px;
+        float:right;
+        margin-left:-10px;
+    }
+    .btn{
+        
+        transform: scale(0.98);
+        background: linear-gradient(to right, #7FAAFF, #f6fe00);
+        color: rgb(255, 255, 255);
+        margin-bottom: 5%;
+        margin-left:48px;
+        padding:5px;
+        width: 150px;
+        height: 45px;
+        font-size: 26px;
+        font-weight: bolder;
+        border-radius: 15px;
+        border: 1px solid white;
+    }
+</style>
+<script>
+    function imgload(index)
+    {
+        link="static/img/"+index+".jpeg"
+        return link
+    }
+</script>
+</head>
+<body>
+    <div class="topbox" ><img src="/static/logo.png"/></div>
+    <div class="allbody">
+        <button class="btn">    
+        {% if length != 0%}
+        {% for list in std_list %}
+        <a href={{url_for("detail", index=list[0])}}>
+            <div class="my_list">
+                <h2>
+                    <div style="width:20px; margin:0px; margin-left:190px">
+                        <p class="index_box" id="index">{{list[0]}}</p>
+                    </div>
+                    <img id="image" src="static/img/{{photo_list[list[0]]}}" style="width: 400px; height: 400px;"/>
+                    <div style="width:380px; margin-left:8px; align-items: right;">
+                        <input class="info_box" value="입력한 문장: {{list[1]}}"/>
+                        <input class="info_box" value="제외할 문장: {{list[2]}}"/>
+                        <input class="info_box" value="사용한 필터: {{list[3]}}"/>
+                        <input class="info_box" value="업로드했을 이미지파일: {{list[4]}}"/>
+                    </div>
+                </h2>
+            </div>
+        </a>
+        {% endfor %}{%else%}
+        <h2>생성할 이미지의 정보를 입력해 주세요</h2>
+        {% endif %}
+    </div>
+</body>
+</html>

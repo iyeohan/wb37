@@ -1,0 +1,73 @@
+// 저장
+            function saveCanvas() {
+              var cnvs = document.getElementById('cnvs');
+              var ctx = cnvs.getContext('2d');
+              
+              // 그렸던 그림을 이미지 데이터로 저장
+              var imgData = ctx.getImageData(0, 0, cnvs.width, cnvs.height);
+              var aData = new Array();
+
+              for (var i = 0; i < imgData.data.length; i += 4) {
+                  aData.push(imgData.data[i]);
+                  aData.push(imgData.data[i + 1]);
+                  aData.push(imgData.data[i + 2]);
+                  // 알파 채널도 저장합니다.
+                  aData.push(imgData.data[i + 3]);
+              }
+
+              localStorage['imgData'] = aData.join('|');
+
+              // 흰 배경으로 설정
+              setCanvasBackground('#FFFFFF');
+
+              // 저장된 그림을 다시 그립니다.
+              var savedImgData = localStorage['imgData'];
+              if (savedImgData) {
+                savedImgData = savedImgData.split('|');
+                var pixelIndex = 0;
+                var newImgData = ctx.createImageData(cnvs.width, cnvs.height);
+                for (var y = 0; y < cnvs.height; y++) {
+                    for (var x = 0; x < cnvs.width; x++) {
+                      newImgData.data[pixelIndex] = parseInt(savedImgData[pixelIndex]);
+                      newImgData.data[pixelIndex + 1] = parseInt(savedImgData[pixelIndex + 1]);
+                      newImgData.data[pixelIndex + 2] = parseInt(savedImgData[pixelIndex + 2]);
+                      newImgData.data[pixelIndex + 3] = parseInt(savedImgData[pixelIndex + 3]);
+                      pixelIndex += 4;
+                    }
+                }
+                ctx.putImageData(newImgData, 0, 0);
+              }
+
+                // 이미지 저장
+                var downloadLink = document.createElement('a');
+                downloadLink.href = cnvs.toDataURL();
+                downloadLink.download = 'canvas_image.png';
+                downloadLink.click();
+            }
+
+
+
+            
+
+            
+            function loadCanvas() {
+                var savedImgData = localStorage['imgData'];
+  
+                if (savedImgData) {
+                  savedImgData = savedImgData.split('|');
+                  var pixelIndex = 0;
+                  for (var y = 0; y < cnvs.height; y++) {
+                    for (var x = 0; x < cnvs.width; x++) {
+                      var r = parseInt(savedImgData[pixelIndex++]);
+                      var g = parseInt(savedImgData[pixelIndex++]);
+                      var b = parseInt(savedImgData[pixelIndex++]);
+                      var a = parseInt(savedImgData[pixelIndex++]);
+                      var rgbaColor = `rgba(${r},${g},${b},${a})`;
+  
+                      // 이미지 데이터를 다시 그림
+                      ctx.fillStyle = rgbaColor;
+                      ctx.fillRect(x, y, 1, 1);
+                    }
+                  }
+                }
+              }

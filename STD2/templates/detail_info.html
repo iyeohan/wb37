@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Damion&family=Gowun+Dodum&family=Kalam&family=Monoton&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="" href="">
+<title> Text-To-Image_previous-list_detail </title>
+
+<style>
+    *{
+        background-color: white;
+        color: #292D3E;
+        font-family: 'Gowun Dodum', sans-serif;
+    }
+    .allbody{
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        text-align: center;
+        flex-wrap: wrap;
+        justify-content:center;
+        margin-top:120px;
+        z-index:1;
+    }
+    
+    .topbox{
+        width: 100%;
+        height: 95px;
+        border: 0px solid white;
+        box-sizing: border-box;
+        margin: 0 auto 20px; 
+        position: fixed;
+        top: 0%;
+        background-color: #a7b3e9;
+        transform: translateX(-50%);
+        transform:scale(1.2);
+        text-align: center; 
+        z-index: 6;
+    }
+    .container{
+        width: auto;
+        min-width: 1000px;
+        height: 600px;
+    }
+    .my_list_img{
+        width: 512px;
+        height: 576px;
+        border: 4px solid #6F86E7;
+        margin: 13px;
+    }
+    .my_list_lsit{
+        width: auto;
+        max-width:1270px;
+        height: 576px;
+        border: 4px solid #6F86E7;
+        margin:13px;
+        text-align: left;
+    }
+</style>
+</head>
+<body>
+    
+    <div class="topbox">
+        <a href="{{url_for("home")}}">   
+            <button style="background-image: url('/static/logo.png'); position:fixed; left:45%; top:25px; width:172px; height:55px; border:0px;"></button>
+        </a>    
+    </div>
+    <div class="container">
+        <div class="allbody">    
+            <div class="my_list_img">
+                <h3>생성된 이미지</h3>
+                <img src={{url_for('static', filename=photo)}}>
+            </div>
+            <div class="my_list_lsit">
+                <h2 style="margin:12px;">
+                    <div style="display: flex; flex-direction: row;">
+                        <h5 style="width:80px; height:27px; margin:0px;">User Id        :</h5><p style="height:27px; font-size: 18px; font-weight: lighter; margin:0px;">{{ userid }}</p>
+                        <h5 style="width:120px; height:27px; margin:0px; margin-left: 15px;">사용한 기능     :</h5><p style="height:27px; font-size: 18px; font-weight: lighter; margin:0px;">{{ stdname }}</p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; margin-top:12px;">
+                        <h5 style="width:auto; height:auto; margin:0px;">입력한 문장        :</h5><p style="height:auto; font-size: 15px; font-weight: lighter; margin:4px; margin-right:10px">{{ pprompt }}</p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; margin-top:12px;">
+                        <h5 style="width:auto; height:auto; margin:0px;">제외할 문장        :</h5><p style="height:auto; font-size: 15px; font-weight: lighter; margin:4px; margin-right:10px">{{ nprompt }}</p>
+                    </div>
+                    <div style="display: flex; flex-direction: row;margin-top:12px;">
+                        <h5 style="width:auto; height:27px; margin:0px;">사용한 파일        :</h5><p style="height:auto; font-size: 15px; font-weight: lighter; margin:4px; margin-right:10px">{{ file }}</p>
+                    </div>            
+                    <div style="display: flex; flex-direction: row;margin-top:12px;">
+                        <h5 style="width:auto; height:27px; margin:0px;">사용한 필터        :</h5><p style="height:27px; font-size: 15px; font-weight: lighter; margin:4px; margin-right:10px">{{ filter }}</p>
+                    </div>
+                    <div style="display: flex; flex-direction: row;margin-top:12px;">
+                        <h5 style="width:auto; height:27px; margin:0px;">cfg 값        :</h5><p style="height:27px; font-size: 15px; font-weight: lighter; margin:4px; margin-right:10px">{{ cfg }}</p>
+                        <h5 style="width:auto; height:27px; margin:0px; margin-left:15px;">steps 수      :</h5><p style="height:27px; font-size: 15px; font-weight: lighter; margin:4px;">{{ steps }}</p>
+                    </div>                    
+                    <div style="display: flex; flex-direction: row;margin-top:12px;">
+                        <h5 style="width:auto; height:27px; margin:0px;">noise 값        :</h5><p style="height:27px; font-size: 15px; font-weight: lighter; margin:4px; margin-right:10px">{{ noise }}</p>
+                        <h5 style="width:auto; height:27px; margin:0px; margin-left:22px">공개 여부     :</h5><p style="height:27px; font-size: 15px; font-weight: lighter; margin:4px;">{{ share }}</p>
+                    </div>
+                </h2>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

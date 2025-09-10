@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Damion&family=Gowun+Dodum&family=Kalam&family=Monoton&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> Text-To-Image_fail </title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="{{ url_for('static', filename='css,js/simple.js') }}"></script>
+    </head>
+<style>
+    *{
+        color: #292D3E;
+        font-family: 'Gowun Dodum', sans-serif;
+    }
+
+    body{
+        margin: 0%;
+        background-color: #ffffff;
+    }
+
+    header{
+        width: 100%;
+        height: 120px;
+        border: 0px solid white;
+        background-color: #a7b3e9;
+        box-sizing: border-box;
+        margin: 0 auto 0px; 
+        position: fixed;
+        left:0px;
+        top:0%;
+        transform: translateX(-0%); 
+        justify-content: center;
+        align-items: center;
+        text-align: center; 
+        z-index: 6;
+    }
+
+    .contents{
+        width: auto;
+        height: 100%;
+        margin-top: 120px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items:center;
+        background-color:#1b275e;
+    }
+    
+    .center{
+        width: auto;
+        max-width: 1270px;
+        height: auto;
+        background: whitesmoke;
+        display: flex;
+        margin-left: 90px;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    #generateimg-button{
+        width: 144px;
+        height: 30px;
+    }
+
+    #backtofirst-button{
+        height: 30px;
+    }
+</style>
+<body>
+    <header>        
+        <a href="{{url_for("home")}}">   
+            <button style="background-image: url('/static/logo.png');transform: scale(1.2); position:fixed; left:45%; top:34px; width:172px; height:55px; border:0px;"></button>
+        </a>
+    </header>
+    <div class="contents">
+        {%if index==1 %}
+        <div style="margin-top:50px;">
+            <p>이 문장(단어)로는 이미지를 생성 할 수 없습니다.</p>
+        </div>
+        <a href="/">
+            <button id="backtofirst-button">
+                처음 페이지로 돌아가기
+            </button>
+        </a>
+        {%elif index==2 %}
+        <div style="margin-top:50px;">
+            <p>이 문장(단어)는 이미 생성한 적 있는 이미지입니다.</p>
+        </div>
+        <a href="/">
+            <button id="backtofirst-button">
+                처음 페이지로 돌아가기
+            </button>
+        </a>
+        {% else %}
+        <div style="width:655.69px; height:150px; display:flex; flex-direction:row; background:whitesmoke;">
+            <div style="width:50%; display:flex; flex-direction:column; text-align:center; margin:15px;justify-content:center;">
+                <p>처음부터 이미지 생성을 하고 싶다면<br>'처음 페이지로 돌아가기'<br> 버튼을 선택해주세요.</p>
+                <a href="/">
+                    <button id="backtofirst-button">
+                        처음 페이지로 돌아가기
+                    </button>
+                </a>
+            </div>
+            <div style="width:50%; display:flex; flex-direction:column; text-align:center; margin:15px;justify-content:center; align-items:center;">
+                <p style="">이미지 생성을 다시 하고 싶다면<br> '이미지 다시 생성하기' 버튼을 선택해주세요.<br>재시도는 10번까지만 가능합니다.</p>
+                <button onclick="resendData()" id="generateimg-button">
+                    이미지 다시 생성하기
+                </button>
+            </div>
+        </div>
+        <div style="width:655.69px; height: 685px; background:whitesmoke; display:flex; flex-direction: row; justify-content: center;">
+            <div style="display:flex; flex-direction:column; width:180px; text-align:center; padding:0px 30px;">
+                <p>Userid</p>
+                <textarea id="userid" type="text" style="word-wrap: break-word; box-sizing: border-box;">{{userid}}</textarea>
+                <p>이미지 생성 기능</p>
+                <textarea id="stdname" type="text" style="word-wrap: break-word; box-sizing: border-box;"readonly>{{stdname}}</textarea>
+                <div style="background-color:whitesmoke; display:flex;margin-top:15px;">
+                    <input type="checkbox" id="opencheck" name="open"value="1">
+                    <label for="open" style="background-color:whitesmoke;"> 공개</label><br>
+                    <input type="checkbox" id="closecheck" name="close"value="0">
+                    <label for="close" style="background-color:whitesmoke;"> 비공개</label><br>
+                </div>
+                <script>
+                    
+                    var checkbox1 = document.getElementById('opencheck');
+                    var checkbox2 = document.getElementById('closecheck');
+                    checkbox1.addEventListener("change", function() {
+                        if (checkbox1.checked) {
+                            checkbox2.checked = false;
+                        }
+                    });
+
+                    checkbox2.addEventListener("change", function() {
+                        if (checkbox2.checked) {
+                            checkbox1.checked = false;
+                        }
+                    });
+
+                    function resendData(){
+                        var userid=document.getElementById('userid').value
+                        var stdname=document.getElementById('stdname').value
+                        var pp=document.getElementById("ptext").value
+                        var np=document.getElementById("ntext").value
+                        var f=document.getElementById("filter").value
+                        var cfg = document.getElementById("cfg").value;
+                        var steps=document.getElementById("steps").value;
+                        var noise=document.getElementById("noise").value;
+                        var oshare=document.getElementById('opencheck')
+                        var cshare=document.getElementById('closecheck')
+                        var share
+                        // 체크된 상태인지 확인하고 값 가져오기
+                        if (oshare.checked) {
+                          share = "1";
+                          }
+                        if (cshare.checked) {
+                          share = "0";
+                          }                
+                        else{share="1"}
+                        if(stdname=="Text To Image"){
+                            // 보낼 데이터를 객체로 생성
+                            var dataToSend = {
+                                user:userid,
+                                share:share,
+                                stdname:stdname,
+                                ptext: pp,
+                                ntext: np,
+                                filter_num: f,
+                                cfg:cfg,
+                                steps:steps
+                            };
+                            $.ajax({
+                                url: "/search", // 데이터를 받아올 서버 엔드포인트 URL
+                                type: "get",
+                                data: dataToSend, // 데이터를 JSON 문자열로 변환하여 전송
+                                success: function(response) {
+                                    // 서버 응답을 받은 후 실행할 함수를 여기에 작성합니다.
+                                    // 예를 들어, 이미지를 렌더링하거나 다른 처리를 수행할 수 있습니다.
+                                    var image_url=response.image_file;
+                                    var page=response.response_data.page;
+                                    closeResult();
+                                    openResult(image_url);
+                                    if (page === '/') {
+                                        window.location.href = page; // 메인 페이지로 이동
+                                    }
+                                },
+                                error: function(error) {
+                                    console.log("Ahh...")
+                                    var page=error.responseJSON.page;
+                                    window.location.href=page;
+                                }
+                            });
+                        }
+                        else if(stdname=="Img To Img")
+                        {
+                            // 보낼 데이터를 객체로 생성
+                            var dataToSend = {
+                                user:userid,
+                                share:share,
+                                stdname:stdname,
+                                image_prompt_text: pp,
+                                image_nprompt_text: np,
+                                filter: f,
+                                cfg:cfg,
+                                steps:steps,
+                                noise:noise
+                            };
+                            $.ajax({
+                                url: "/change_image", // 데이터를 받아올 서버 엔드포인트 URL
+                                type: "POST",
+                                data: dataToSend, // 데이터를 JSON 문자열로 변환하여 전송
+                                success: function(response) {
+                                    // 서버 응답을 받은 후 실행할 함수를 여기에 작성합니다.
+                                    // 예를 들어, 이미지를 렌더링하거나 다른 처리를 수행할 수 있습니다.
+                                    var image_url=response.image_file;
+                                    var page=response.response_data.page;
+                                    closeResult();
+                                    openResult(image_url);
+                                    if (page === '/') {
+                                        window.location.href = page; // 메인 페이지로 이동
+                                    }
+                                },
+                                error: function(error) {
+                                    console.log("Ahh...")
+                                    var page=error.responseJSON.page;
+                                    window.location.href=page;
+                                }
+                            });
+                        }
+                    }
+                </script>
+                <p>선택한 필터</p>
+                <textarea id="filter" type="text" style="word-wrap: break-word; box-sizing: border-box;" readonly>{{filter}}</textarea>
+                <p>cfg 값</p>
+                <textarea id="cfg" type="text" style="word-wrap: break-word; box-sizing: border-box;">{{cfg}}</textarea>
+                <p>steps 수</p>
+                <textarea id="steps" type="text" style="word-wrap: break-word; box-sizing: border-box;">{{steps}}</textarea>
+                <p>noise-strengh</p>
+                <textarea id="noise" type="text" style="word-wrap: break-word; box-sizing: border-box; margin-bottom:30px;">{{noise}}</textarea>
+            </div>              
+            <div class="center">
+                <p>사용했던 문장(단어)</p>
+                <textarea id="ptext" type="text" style="word-wrap: break-word; width: 100%; height:auto; min-height: 145px; box-sizing: border-box;">{{pprompt}}</textarea>
+                <p style="margin-top:14px;">사용했던 중요하지 않은 문장(단어)</p>
+                <textarea id="ntext" type="text" style="word-wrap: break-word; width: 100%; height:auto; min-height: 145px; box-sizing: border-box;">{{nprompt}}</textarea>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

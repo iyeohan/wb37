@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Damion&family=Gowun+Dodum&family=Kalam&family=Monoton&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="" href="">
+<title> Text-To-Image </title>
+<style>
+    
+    *{
+        background-color: black;
+        color: white;
+        font-family: 'Gowun Dodum', sans-serif;
+    }
+    .half {
+        width: 20%;
+        height: 100%;
+        min-width: 460px;
+        text-align: center;
+        align-items: center;
+        margin-right: 1px;
+    }
+    .half2 {
+        width: 530px;
+        height: 100%;
+        min-width: 460px;
+        text-align: center;
+        align-items: center;
+        position: absolute;
+        top: 10px;
+    }
+
+    .middle {
+        width: 20%;
+        height: 100%;
+        text-align: center;
+        align-items: center;
+        position: absolute;
+        top: 10px;
+        left:650px;
+    }
+    body{
+        margin: auto;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .input::file-selector-button {
+        margin-top: 3px;
+        color: white;
+        text-align: center;
+        background-color: rgb(32, 25, 25);
+        width: 80px;
+        height: 38px;
+        font-size: 15px;
+    }
+    .allbody {
+        width: 98%;
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        text-align: center;
+        flex-wrap: wrap;
+        margin-left:30px;
+        margin-top:60px;
+        z-index:1;
+    }
+    
+    .topbox{
+        width: 170px;
+        height: 66px;
+        border: 0px solid white;
+        box-sizing: border-box;
+        margin: 0 auto 20px; 
+        position: fixed;
+        left:49.5%;
+        top:2%;
+        transform: translateX(-50%);
+        text-align: center; 
+        z-index: 6;
+    }
+    .box1{
+        width: 400px;
+        height: 30px;
+        margin-bottom: 30px;
+        margin-left:28px;
+        box-sizing: border-box;
+    }
+    .box2{
+        width : 400px;
+        height : 100px;
+        border : 1px solid white;
+        margin-bottom: 32px;
+        margin-left:28px;
+        box-sizing: border-box;   
+    }
+    .box22{
+        width : 400px;
+        height : 100px;
+        border : 1px solid white;
+        margin-bottom: 32px;
+        margin-left:20px;
+        box-sizing: border-box;   
+    }
+    .box3{
+        width: 100%;
+        height: 30px;
+        margin-bottom: 30px;
+        margin-left:120px;
+        margin-right:900px;
+        box-sizing: border-box;
+    }
+    .drawbox{
+        width:500px;
+        height: 500px;
+        border: 1px solid white;
+        background-color: white;
+        display: flex;
+        box-sizing: border-box;
+        padding : 1rem;
+        border-radius: 25px;
+        align-items: center;
+        margin-left: -20px;
+    }
+    .toolbox{
+        width:40px;
+        height:500px;
+        display: flex;
+        flex-direction: column-reverse;
+        margin-left:10px;
+        padding-right: 0px;
+    }
+    .text1{
+        width: 400px;
+        height: 40px;
+        border: 1px solid white;
+        box-sizing: border-box;
+        margin-bottom: 30px;
+        margin-left:48px;
+    }
+    .select{
+        width: 350px;
+        height: 220px;
+        border: 1px solid white;
+        box-sizing:border-box;
+        margin-bottom: 30px;
+        margin-left:48px;
+
+    }
+    .result{
+        width: 512px;
+        height: 512px;
+        border: 1px solid white;
+        box-sizing:border-box;
+    }
+    .filter{
+        width: 350px;
+        height: 220px;
+        border: 1px solid white;
+        box-sizing: border-box;
+        margin-bottom: 30px;
+        margin-left:48px;
+        position:absolute;
+        left:650px;
+        top:450px;
+    }
+    .settingsbtn {
+        transform: scale(0.98);
+        color: white;
+        background-color: rgb(32, 25, 25);
+        padding:5px;
+        width: 150px;
+        height: 45px;
+        font-size: 26px;
+        margin-bottom: 30px;
+        margin-left:48px;
+    }
+    .createbtn {
+        transform: scale(0.98);
+        color: white;
+        background-color: rgb(32, 25, 25);
+        margin-bottom: 30px;
+        margin-left:48px;
+        padding:5px;
+        width: 150px;
+        height: 45px;
+        font-size: 26px;
+    }
+    .image{
+        width: 500px;
+        height: 500px;
+        position: absolute;
+      }
+</style>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script>
+
+    const downloadLink = document.createElement('a');
+    var startX, startY;
+
+   function fileselect()
+   {
+    var imageurl = document.getElementById("filename").value;
+        console.log(imageurl);
+        var imagename = imageurl.split("\\");
+        var image = imagename[imagename.length-1];
+        var imagebox = document.getElementById("cnvs");
+        imagebox.style.backgroundImage = "url(" + image + ")";
+    
+        var cnvs = document.getElementById('cnvs');
+        var ctx = cnvs.getContext('2d');
+    
+        // 이미지 출력 전에 기존 이미지를 지움
+        ctx.clearRect(0, 0, cnvs.width, cnvs.height);
+    
+        localStorage.removeItem('imgData');
+    
+        // Ajax 요청 수행
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/upload_done", true);
+        xhr.responseType = "json";
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var response = xhr.response;
+                if (response.success) {
+                    var image_path = response.image_path;
+                    // URL에 유니크한 값(타임스탬프)을 추가하여 고유한 URL 생성
+                    var uniqueImagePath = image_path + "?" + Date.now();
+                    var img = new Image();
+    
+                    img.onload = function() {
+                        // 이미지를 그림판에 그리기
+                        ctx.clearRect(0, 0, cnvs.width, cnvs.height);
+                        ctx.drawImage(img, 0, 0, cnvs.width, cnvs.height);
+                    };
+                    img.src = uniqueImagePath;
+    
+                    // 파일 입력 필드 초기화
+                    document.getElementById("filename").value = "";
+                } else {
+                    console.log(response.message);
+                }
+            }
+        };
+        var formData = new FormData();
+        formData.append("image", document.getElementById("filename").files[0]);
+        xhr.send(formData);
+   }
+    
+
+   $(document).ready(function(){
+    
+    var cnvs = document.getElementById('cnvs');
+    if (cnvs.getContext) {
+        var ctx = cnvs.getContext('2d');
+        var isDraw = false;
+        ctx.lineCap='round';
+        ctx.lineJoin='round';
+    
+        if (localStorage['imgData']) {
+            var aData = new Array();
+            aData = localStorage['imgData'].split('|');
+            var imgData = ctx.createImageData(cnvs.width, cnvs.height);
+
+            var j = 0;
+            for (var i=0; i<imgData.data.length; i+=4) {
+                imgData.data[i]    = aData[j+0]; 
+                imgData.data[i+1] = aData[j+1]; 
+                imgData.data[i+2] = aData[j+2];
+                imgData.data[i+3] = 0xFF; 
+                j += 3;
+            }
+            ctx.putImageData(imgData, 0, 0);
+        // 이미지 초기화
+        } 
+        else {
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, cnvs.width, cnvs.height);
+        }
+
+        // 그리기 옵션
+        var dot = 1;
+        var color = 'rgb(0, 0, 0)';
+
+        // 그리기 옵션 - 도트크기
+        $('#dot').bind('change', function(){  dot = $('#dot').val(); });
+        // 그리기 옵션 - 색깔
+        $('#color').bind('change', function(){ color = $('#color').val(); });
+
+        // 이벤트 핸들러 연결
+        $('#cnvs').mousemove(function(e){
+            // 그릴 수 있으면 그린다.
+            if (isDraw) draw(e);        
+        });
+        
+        $('#cnvs').mousedown(function(e){
+            // 왼쪽 버튼 down 이면 그릴 수 있다고 선언
+            if (e.button===0) {
+                isDraw = true;
+                startX = e.offsetX;
+                startY = e.offsetY;
+                draw(e);
+            }
+        });
+        
+        $('#cnvs').mouseup(function(e){
+            // 버튼 up 이면 그릴 수 없다고 선언
+            isDraw = false;   
+
+        });
+
+        
+        function setCanvasBackground(color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(0, 0, cnvs.width, cnvs.height);
+        }
+
+        function downloadCanvasImage(canvas, filename) {
+            // 캔버스의 이미지를 데이터 URL로 변환
+            var dataURL = canvas.toDataURL();
+        
+            // 캔버스의 이미지 데이터를 Blob 형태로 변환
+            var blob = dataURLToBlob(dataURL);
+        
+            // a 태그를 생성하여 다운로드 링크로 사용
+            var downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(blob);
+            downloadLink.download = 'canvas_image.png';
+        
+            // 링크를 클릭하여 이미지를 다운로드
+            downloadLink.click();
+        }
+
+        function saveCanvasToImage() {
+            // 그렸던 그림을 이미지 데이터로 저장
+            var cnvs = document.getElementById('cnvs'); // 캔버스 요소를 가져옴
+            var imgData = ctx.getImageData(0, 0, cnvs.width, cnvs.height);
+            var aData = new Array();
+        
+            for (var i = 0; i < imgData.data.length; i += 4) {
+                aData.push(imgData.data[i]);
+                aData.push(imgData.data[i + 1]);
+                aData.push(imgData.data[i + 2]);
+                // 알파 채널도 저장합니다.
+                aData.push(imgData.data[i + 3]);
+            }
+        
+            localStorage['imgData'] = aData.join('|');
+        
+            // 흰 배경으로 설정
+            setCanvasBackground('#FFFFFF');
+        
+            // 저장된 그림을 다시 그립니다.
+            var savedImgData = localStorage['imgData'];
+            if (savedImgData) {
+                savedImgData = savedImgData.split('|');
+                var pixelIndex = 0;
+                for (var y = 0; y < cnvs.height; y++) {
+                    for (var x = 0; x < cnvs.width; x++) {
+                        var r = parseInt(savedImgData[pixelIndex++]);
+                        var g = parseInt(savedImgData[pixelIndex++]);
+                        var b = parseInt(savedImgData[pixelIndex++]);
+                        var a = parseInt(savedImgData[pixelIndex++]);
+                        var rgbaColor = `rgba(${r},${g},${b},${a})`;
+        
+                        // 이미지 데이터를 다시 그림
+                        ctx.fillStyle = rgbaColor;
+                        ctx.fillRect(x, y, 1, 1);
+                    }
+                }
+            }
+        }
+        
+        //이미지 보내는 코드 
+        function sendImageToServer() {
+            var cnvs = document.getElementById('cnvs'); // 캔버스 요소를 가져옴
+            var imageBlob = cnvs.toBlob();
+            var imagePromptText = document.getElementById('image_prompt_text').value;
+        
+            // FormData 객체를 생성하고 데이터를 추가합니다.
+            var formData = new FormData();
+            formData.append('image_data', imageBlob);
+            formData.append('image_prompt', imagePromptText);
+        
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/change_image', true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    // 서버로부터 받은 데이터를 처리하는 로직을 추가하세요
+                } else if (xhr.readyState === XMLHttpRequest.DONE) {
+                    // 에러 처리 로직을 추가하세요
+                }
+            };
+            xhr.send(formData);
+        }
+
+        // 그리기
+        function getCanvasCoordinates(event) {
+
+            var cnvsRect = cnvs.getBoundingClientRect(); // 그림판 요소의 위치와 크기 정보
+            var offsetX = event.clientX - cnvsRect.left; // 그림판 내에서의 X 좌표
+            var offsetY = event.clientY - cnvsRect.top; // 그림판 내에서의 Y 좌표
+            return { x: offsetX, y: offsetY };
+        }
+        
+        function draw(e) {
+            var currentColor = color; // 변경된 부분: color 변수 사용
+            var currentPos = getCanvasCoordinates(e); // 그림판 내에서의 마우스 좌표
+        
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(currentPos.x, currentPos.y);
+            ctx.lineWidth = dot;
+            ctx.strokeStyle = currentColor; // 변경된 부분: 현재 색상 적용
+            ctx.stroke();
+            ctx.closePath();
+        
+            startX = currentPos.x;
+            startY = currentPos.y;
+        
+            if (currentPos.x < 0 || currentPos.y < 0 || currentPos.x > cnvs.width || currentPos.y > cnvs.height) {
+                return 0;
+            }
+        }
+
+        // 지우기
+        function clearCanvas()
+        {
+            ctx.clearRect(0, 0, cnvs.width, cnvs.height);
+            ctx.beginPath();
+
+            localStorage.removeItem('imgData');
+        }
+        
+        // 저장
+        function saveCanvas() {
+           // 그렸던 그림을 이미지 데이터로 저장
+            var imgData = ctx.getImageData(0, 0, cnvs.width, cnvs.height);
+            var aData = new Array();
+
+            for (var i = 0; i < imgData.data.length; i += 4) {
+                aData.push(imgData.data[i]);
+                aData.push(imgData.data[i + 1]);
+                aData.push(imgData.data[i + 2]);
+                // 알파 채널도 저장합니다.
+                aData.push(imgData.data[i + 3]);
+            }
+
+            localStorage['imgData'] = aData.join('|');
+
+            // 흰 배경으로 설정
+            setCanvasBackground('#FFFFFF');
+
+            // 저장된 그림을 다시 그립니다.
+            var savedImgData = localStorage['imgData'];
+            if (savedImgData) {
+                savedImgData = savedImgData.split('|');
+                var pixelIndex = 0;
+                for (var y = 0; y < cnvs.height; y++) {
+                    for (var x = 0; x < cnvs.width; x++) {
+                        var r = parseInt(savedImgData[pixelIndex++]);
+                        var g = parseInt(savedImgData[pixelIndex++]);
+                        var b = parseInt(savedImgData[pixelIndex++]);
+                        var a = parseInt(savedImgData[pixelIndex++]);
+                        var rgbaColor = `rgba(${r},${g},${b},${a})`;
+
+                        // 이미지 데이터를 다시 그림
+                        ctx.fillStyle = rgbaColor;
+                        ctx.fillRect(x, y, 1, 1);
+                        }
+                    }
+                    }
+                
+                    // 저장된 그림을 이미지로 변환하여 다운로드합니다.
+                    downloadLink.href = cnvs.toDataURL();
+                    downloadLink.download = 'canvas_image.png';
+                    downloadLink.click();
+        }
+
+        // 전체지우기
+        $('button[id="btnAllDel"]').click(function(){
+            clearCanvas();
+        });
+
+        // 저장하기
+        $('button[id="btnSave"]').click(function(){
+            saveCanvas();
+        });
+
+    // canvas 사용불가
+    } 
+    else {
+    alert('canvas가 지원되지 않는 브라우저입니다. 구글 크롬을 권장합니다.');
+    return;
+    }
+});
+
+   function generateImage() {
+    $.ajax({
+        url: "/get_encoded_image",
+        type: "GET",
+        data: { prompt: prompt },
+        success: function(response) {
+            var image_data = response.image_data; // 서버에서 받아온 이미지 데이터
+
+            // 이미지 소스를 설정하여 이미지를 표시
+            var imgElement = document.createElement('generatedImage');
+            imgElement.src = image_src;
+            imgElement.width = 400;
+            imgElement.height = 500;
+
+            var imageBox = document.getElementById('Load_Image');
+            imageBox.innerHTML = '';
+            imageBox.appendChild(imgElement);
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    });
+    }
+</script>
+</head>
+<body>
+    <div class="topbox">
+        <img src="static/logo.png"/>
+    </div>
+    <!--파일 입력-->
+    <form class="box3" method="POST" enctype="multipart/form-data">
+        <input id="filename" class="input" type="file" name="file"/>
+        <button onclick="fileselect();" style="position: absolute; left: 450px; float: right; background-color: rgb(32, 25, 25); width: 90px; height: 40px; font-size: 12px;" >파일선택 완료
+        </button>
+    </form>
+    <div class="toolbox">
+        <button id="btnSave" style="margin: 1px; width: 30px; border-radius:10px; background-color:white; float:right; vertical-align: middle;">저장하기</button>
+        <!-- 도트크기 -->
+        <select id="dot" style="margin: 1px; width: 30px; border-radius:10px; background-color:white; float:right; margin-right:2px; vertical-align: middle;">
+            <option value="1">1px</option>
+            <option value="2">2px</option>
+            <option value="3">3px</option>
+            <option value="4">4px</option>
+            <option value="5">5px</option>
+            <option value="6">6px</option>
+            <option value="7">7px</option>
+            <option value="8">8px</option>
+            <option value="9">9px</option>
+            <option value="10">10px</option>
+            <option value="11">11px</option>
+            <option value="12">12px</option>
+            <option value="13">13px</option>
+            <option value="14">14px</option>
+            <option value="15">15px</option>
+        </select>
+        <button id="btnAllDel" style="margin: 1px; width: 30px; border-radius:10px; background-color:white; float:right; margin-right:2px; vertical-align: middle;">전체지우기</button>
+        <!-- 색깔 -->
+        <input type="color" id="color"  value="#ffffff" style="margin: 1px; width: 30px; border-radius:10px; background-color:white; float:right; vertical-align: middle;"/>
+    </div>
+    <div class="allbody">
+        <form action="/giveinfo" method="get" style="width:1210px">
+            <div class="half" style="margin-left:50px">
+
+                <!-- 언어 선택-->
+                <div class="box1">
+                    <select name = "language1">
+                        <option value ="korean" selected>한국어</option>
+                        <option value ="english">영어</option>
+                        <option value ="japanese">일본어</option>
+                        <option value ="chinese">중국어</option>
+                        <option value ="spanish">스페인어</option>
+                    </select>
+                    <p style="display: inline;">&nbsp;&nbsp;&nbsp;--&gt;&nbsp;&nbsp;&nbsp;</p>
+                    <select name = "language2">
+                        <option value ="english" selected>영어</option>
+                    </select>
+                    <p style="display: inline;">&nbsp;&nbsp;&nbsp;</p>
+                    <input type="radio" name="radiobutton" value="보존">보존
+                    <input type="radio" name="radiobutton" value="변형">변형 
+                </div>
+
+                <!-- 텍스트 입력 칸 -->
+                <div class="box2">
+                    <textarea cols="30" style="height: 92px; width: 392px; margin: -5px; margin-top:1px; word-wrap: break-word;" type="text" name="ptext" id="p_text"></textarea>
+                </div>
+                <!-- 그림판 -->
+                <canvas name="canvas" id="cnvs" class="drawbox" width="500" height="500">
+                </canvas>
+                <br />
+                
+            </div>
+
+            <div class="middle">
+                <!-- 텍스트 입력 칸 -->
+                <div id="negative" class="box22">
+                    <div style="width:100%; height:22px;"><b style="text-align: center;">&lt;중요하지 않은 단어&gt;</b></div>
+                    <textarea cols="30" style="height: 70px; width: 392px; margin: -5px; margin-top:1px; word-wrap: break-word;" type="text" name="ntext" id="n_text"></textarea>
+                </div>
+                <!-- 동음이의어 선택 칸 -->
+                <div class="select"><b>&lt;동음이의어 선택&gt;</b>
+
+                </div>
+                <div class="box3">    
+                    <b style="font-size: 22px;">선택한 필터:</b>
+                    <input type="text" style="height:22px; width:50px; margin:0px; margin-left:2px;" name="filter-num" id="filter" value="" readonly/>
+                </div>
+                <button id="createImage" class="createbtn" style="position: absolute; top: 670px; left:110px" onclick="generateImage(); sendImageToServer(); return false;">이미지 생성
+                </button>
+            </div>
+        </form>
+        <script>
+            function selectfilter(number)
+            {
+                var filter=document.getElementById("filter");
+                filter.setAttribute("value", number)
+            }
+
+        </script>
+        <!-- 필터 선택 칸 -->
+        <div class="filter" name="filter" value="filter()">
+            <div style="width:100%; height:22px;"><b style="text-align: center; float:center">&lt;필터 선택&gt;</b>
+            </div>
+            <button style="margin:5px; border-radius: 25px; width: 90px; height: 90px;" onclick="selectfilter(1)">
+                <img src="https://cdn-icons-png.flaticon.com/128/6278/6278816.png" style="border-radius: 25px; width: 60px; height: 60px; z-index: -3000;" width="70px" height="80px" />
+                <b>카툰 필터</b>
+            </button>
+            <button style="margin:5px; border-radius: 25px; width: 90px; height: 90px;" onclick="selectfilter(2)">
+                <img src="https://cdn-icons-png.flaticon.com/128/10296/10296375.png" style="border-radius: 25px; width: 60px; height: 60px; z-index: -1000;" width="70px" height="80px"/>
+                <b>인물화 필터</b>
+            </button>
+            <button style="margin:5px; border-radius: 25px; width: 90px; height: 90px;" onclick="selectfilter(3)">
+                <img src="https://cdn-icons-png.flaticon.com/128/465/465261.png" style="border-radius: 25px; width: 60px; height: 60px; z-index: -1000;" width="70px" height="80px"/>
+                <b>픽셀 필터</b>
+            </button>
+            <button style="margin:5px; border-radius: 25px; width: 90px; height: 90px;" onclick="selectfilter(4)">
+                <img src="https://cdn-icons-png.flaticon.com/128/6847/6847489.png" style="border-radius: 25px; width: 60px; height: 60px; z-index: -1000;" width="70px" height="80px"/>
+                <b>공상과학필터</b>
+            </button>
+            <button style="margin:5px; border-radius: 25px; width: 90px; height: 90px;" onclick="selectfilter(5)">
+                <img src="https://cdn-icons-png.flaticon.com/128/1864/1864472.png" style="border-radius: 25px; width: 60px; height: 60px; z-index: -1000;" width="70px" height="80px"/>
+                <b>동물 필터</b>
+            </button>
+            <button style="margin:5px; border-radius: 25px; width: 90px; height: 90px;" onclick="selectfilter(6)">
+                <img src="https://cdn-icons-png.flaticon.com/128/8490/8490308.png" style="border-radius: 25px; width: 60px; height: 60px; z-index: -1000;" width="70px" height="80px"/>
+                <b>호러 필터</b>
+            </button>
+        </div>
+
+        <div class="half2" style="margin-left: 1150px;">
+            <div  id = "Load_Image" class = "result">
+                <img id="generatedImage" width="512px" height="512px" src="{{ image_url }}" alt="Generated Image">
+            </div>
+            <a href="/list">
+                <button type="submmit" style="float: right; background-color: rgb(32, 25, 25); width: 100px; height: 40px; font-size: 12px; margin: 20px;">
+                지난 기록 보기
+                </button>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
